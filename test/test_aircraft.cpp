@@ -4,23 +4,26 @@
 #include <stdio.h>
 #include <assert.h>
 #include "../src/aircraft.h"
+#include "../src/logging.h"
 using namespace std;
 
 #define IS_TRUE(x) {if (!(x)) cout << __FUNCTION__ << " failed on line " << __LINE__ << endl;}
 
 void test_updateParameters() {
+    Logger logger("./test_updateParameters.log");
+    logger.log(INFO, "running test_updateParameters()");
     string name = "mine";
-    int cruiseSpeed = 100;      // mph
-    int batteryCapacity = 300;  // kWh
-    int timeToCharge = 0.1;     // hours
-    int energyUsage = 1.5;      // kWh
-    int passengerCount = 4;     // people
-    int faultProb = 1;          // probabily/hour force fault
+    float cruiseSpeed = 100;      // mph
+    float batteryCapacity = 300;  // kWh
+    float timeToCharge = 0.1;     // hours
+    float energyUsage = 1.5;      // kWh
+    int passengerCount = 4;       // people
+    float faultProb = 1;          // probabily/hour -> set to 1 to force fault
 
     Aircraft myAircraft(name, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
 
     float pre_remainingCharge = myAircraft.getRemainingCharge();
-    Aircraft_states pre_current_state = myAircraft.getCurrent_state();
+    Aircraft_states pre_current_state = myAircraft.getCurrentState();
     int pre_flightTime = myAircraft.getFlightTime();
     float pre_distanceTraveled = myAircraft.getDistanceTraveled();
     int pre_timeCharging = myAircraft.getTimeCharging();
@@ -30,50 +33,97 @@ void test_updateParameters() {
     myAircraft.updateParameters(1);
 
     float post_remainingCharge = myAircraft.getRemainingCharge();
-    Aircraft_states post_current_state = myAircraft.getCurrent_state();
+    Aircraft_states post_current_state = myAircraft.getCurrentState();
     int post_flightTime = myAircraft.getFlightTime();
     float post_distanceTraveled = myAircraft.getDistanceTraveled();
     int post_timeCharging = myAircraft.getTimeCharging();
     int post_numFaults = myAircraft.getNumFaults();
 
+
     IS_TRUE(post_remainingCharge == pre_remainingCharge - energyUsage * cruiseSpeed * 1/HOUR_TO_MS);
+    logger.log(DEBUG, "remaingCharge: " + to_string(pre_remainingCharge) + " -> " + to_string(post_remainingCharge));
+    
     IS_TRUE(post_current_state == pre_current_state);
+    logger.log(DEBUG, "currentState: " + to_string(pre_current_state) + " -> " + to_string(post_current_state));
+    
     IS_TRUE(post_flightTime == pre_flightTime + 1);
+    logger.log(DEBUG, "flightTime: " + to_string(pre_flightTime) + " -> " + to_string(post_flightTime));
+    
     IS_TRUE(post_distanceTraveled == pre_distanceTraveled + cruiseSpeed*1/HOUR_TO_MS);
+    logger.log(DEBUG, "distanceTraveled: " + to_string(pre_distanceTraveled) + " -> " + to_string(post_distanceTraveled));
+    
     IS_TRUE(post_timeCharging == pre_timeCharging);
+    logger.log(DEBUG, "timeCharging: " + to_string(pre_timeCharging) + " -> " + to_string(post_timeCharging));
+    
     IS_TRUE(post_numFaults == pre_numFaults + 1);
+    logger.log(DEBUG, "numFaults: " + to_string(pre_numFaults) + " -> " + to_string(post_numFaults));
 }
 
 void test_charging() {
+    Logger logger("./test_charging.log");
+    logger.log(INFO, "running test_charging()");
+
     string name = "mine";
-    int cruiseSpeed = 100;      // mph
-    int batteryCapacity = 10;   // kWh
-    int timeToCharge = 0.1;     // hours
-    int energyUsage = 1.5;      // kWh
-    int passengerCount = 4;     // people
-    int faultProb = 0.25;       // probabily/hour - force fault
+    float cruiseSpeed = 500;     // mph
+    float batteryCapacity = 1;   // kWh
+    float timeToCharge = 0.01;   // 0.01 hours -> 36000 ms
+    float energyUsage = 10;      // kWh
+    int passengerCount = 4;      // people
+    float faultProb = 0.25;      // probabily/hour
 
     Aircraft myAircraft(name, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
     
     int pre_flightTime = myAircraft.getFlightTime();
+    float pre_remainingCharge = myAircraft.getRemainingCharge();
+    Aircraft_states pre_current_state = myAircraft.getCurrentState();
 
     // deplete the battery
-    myAircraft.updateParameters(1);
-    // aircraft should gound, need to trigger charging process
+    // aircraft should gound and have no remaining charge
+    myAircraft.updateParameters(1000);
 
-    // charge
+    int post_flightTime = myAircraft.getFlightTime();
+    float post_remainingCharge = myAircraft.getRemainingCharge();
+    Aircraft_states post_current_state = myAircraft.getCurrentState();
+
+    // logging outcome of updateParameters
+    IS_TRUE(post_flightTime == pre_flightTime + 1000);
+    logger.log(DEBUG, "flightTime: " + to_string(pre_flightTime) + " -> " + to_string(post_flightTime));
+
+    logger.log(DEBUG, "remainingCharge: " + to_string(pre_flightTime) + " -> " + to_string(post_remainingCharge));
+    IS_TRUE(post_remainingCharge < 0);
+
+    IS_TRUE(post_current_state == pre_current_state);
+    logger.log(DEBUG, "currentState: " + to_string(pre_current_state) + " -> " + to_string(post_current_state));
+
+
+    // charge the battery
+    // aircraft should being flying and battery should refill
+    int pre_timeCharging = myAircraft.getTimeCharging();
+
     myAircraft.charging(36000);
 
-    // check that it starts flying after done charging
     int post_timeCharging = myAircraft.getTimeCharging();
 
-    IS_TRUE(post_timeCharging == pre_flightTime + 36000)
+    // logging outcome of charging
+    IS_TRUE(myAircraft.getTimeCharging() == pre_timeCharging + 36000);
+    logger.log(DEBUG, "timeCharging: " + to_string(pre_timeCharging) + " -> " + to_string(post_timeCharging));
 
+    IS_TRUE(myAircraft.getRemainingCharge() == batteryCapacity);
+    logger.log(DEBUG, "remainingCharge: " + to_string(post_remainingCharge) + " -> " + to_string(myAircraft.getRemainingCharge()));
+
+    IS_TRUE(myAircraft.getCurrentState() == FLYING);
+    logger.log(DEBUG, "currentState: " + to_string(post_current_state) + " -> " + to_string(myAircraft.getCurrentState()));
+
+}
+
+void test_multipleAircraftCharge() {
 
 }
 
 int main() {
 
-    test_updateParameters();
+    // test_updateParameters();
+    test_charging();
+
     return 0;
 }

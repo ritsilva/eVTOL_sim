@@ -1,4 +1,5 @@
-// C++ program to implement a basic logging system.
+#ifndef LOGGING_H
+#define LOGGING_H
 
 #include <ctime>
 #include <fstream>
@@ -71,3 +72,5 @@ private:
         }
     }
 };
+
+#endif // LOGGING_H

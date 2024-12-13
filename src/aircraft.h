@@ -5,7 +5,7 @@
 #include "../src/logging.h"
 using namespace std;
 
-#define HOUR_TO_MS 60*60*1000
+#define HOUR_TO_MS (60*60*1000)
 
 enum Aircraft_states {
     GROUNDED,
@@ -18,16 +18,17 @@ class Aircraft {
     private:
         // aircraft parameters
         string name;
-        int cruiseSpeed;        // mph
-        int batteryCapacity;    // kWh
-        int timeToCharge;       // hours
-        int energyUsage;        // kWh/mile
-        int passengerCount;     // people
-        int faultProb;          // probabily/hour
+        float cruiseSpeed;        // mph
+        float batteryCapacity;    // kWh
+        float timeToCharge;       // hours
+        float energyUsage;        // kWh/mile
+        int passengerCount;       // people
+        float faultProb;          // probabily/hour
 
         // aircraft stats
         float remainingCharge;
-        Aircraft_states current_state;
+        int currentChargingTime;
+        Aircraft_states currentState;
 
         // the following should be tracked per aircraft type (name) when reported.  
         int flightTime;         // miliseconds
@@ -35,15 +36,16 @@ class Aircraft {
         int timeCharging;       // miliseconds
         int numFaults;
 
+    bool doesFaultOccur(float prob);
 
     public:
         Aircraft(string name,
-                 int cruiseSpeed,
-                 int batteryCapacity,
-                 int timeToCharge,
-                 int energyUsage,
+                 float cruiseSpeed,
+                 float batteryCapacity,
+                 float timeToCharge,
+                 float energyUsage,
                  int passengerCount,
-                 int faultProb);
+                 float faultProb);
 
         // proceed 'step' (miliseconds)
         void updateParameters(int step);
@@ -51,7 +53,7 @@ class Aircraft {
         bool charging(int step);
         // accessor function
         inline float getRemainingCharge() {return remainingCharge;}
-        inline Aircraft_states getCurrent_state() {return current_state;}
+        inline Aircraft_states getCurrentState() {return currentState;}
         inline int getFlightTime() {return flightTime;}
         inline float getDistanceTraveled() {return distanceTraveled;}
         inline int getTimeCharging() {return timeCharging;}
