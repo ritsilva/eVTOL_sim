@@ -1,17 +1,12 @@
 #include <iostream>
-#include <vector>
-#include <random>
 #include <stdio.h>
-#include <assert.h>
 #include "../src/aircraft.h"
 #include "../src/logging.h"
 using namespace std;
 
-#define IS_TRUE(x) {if (!(x)) cout << __FUNCTION__ << " failed on line " << __LINE__ << endl;}
-
-void test_updateParameters() {
-    Logger logger("./test_updateParameters.log");
-    logger.log(INFO, "running test_updateParameters()");
+void test_processTime() {
+    Logger logger("./test_processTime.log");
+    logger.log(INFO, "running test_processTime()");
     string name = "mine";
     float cruiseSpeed = 100;      // mph
     float batteryCapacity = 300;  // kWh
@@ -30,7 +25,7 @@ void test_updateParameters() {
     int pre_numFaults = myAircraft.getNumFaults();
 
     // proceed 1 ms and check aircraft stats
-    myAircraft.updateParameters(1);
+    myAircraft.processTime(1);
 
     float post_remainingCharge = myAircraft.getRemainingCharge();
     Aircraft_states post_current_state = myAircraft.getCurrentState();
@@ -79,18 +74,18 @@ void test_charging() {
 
     // deplete the battery
     // aircraft should gound and have no remaining charge
-    myAircraft.updateParameters(1000);
+    myAircraft.processTime(1000);
 
     int post_flightTime = myAircraft.getFlightTime();
     float post_remainingCharge = myAircraft.getRemainingCharge();
     Aircraft_states post_current_state = myAircraft.getCurrentState();
 
-    // logging outcome of updateParameters
+    // logging outcome of processTime
     IS_TRUE(post_flightTime == pre_flightTime + 1000);
     logger.log(DEBUG, "flightTime: " + to_string(pre_flightTime) + " -> " + to_string(post_flightTime));
 
-    logger.log(DEBUG, "remainingCharge: " + to_string(pre_flightTime) + " -> " + to_string(post_remainingCharge));
     IS_TRUE(post_remainingCharge < 0);
+    logger.log(DEBUG, "remainingCharge: " + to_string(pre_flightTime) + " -> " + to_string(post_remainingCharge));
 
     IS_TRUE(post_current_state == pre_current_state);
     logger.log(DEBUG, "currentState: " + to_string(pre_current_state) + " -> " + to_string(post_current_state));
@@ -100,7 +95,7 @@ void test_charging() {
     // aircraft should being flying and battery should refill
     int pre_timeCharging = myAircraft.getTimeCharging();
 
-    myAircraft.charging(36000);
+    myAircraft.charge(36000);
 
     int post_timeCharging = myAircraft.getTimeCharging();
 
@@ -116,14 +111,15 @@ void test_charging() {
 
 }
 
-void test_multipleAircraftCharge() {
+void test_multipleAircraftChargeing() {
 
 }
 
 int main() {
 
-    // test_updateParameters();
+    test_processTime();
     test_charging();
+    test_multipleAircraftChargeing();
 
     return 0;
 }

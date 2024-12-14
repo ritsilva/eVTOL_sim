@@ -7,6 +7,8 @@
 #include <sstream>
 using namespace std;
 
+#define IS_TRUE(x) {if (!(x)) cout << __FUNCTION__ << " failed on line " << __LINE__ << endl;}
+
 // Enum to represent log levels
 enum LogLevel {DEBUG, INFO, WARNING, ERROR, CRITICAL};
 

@@ -9,6 +9,7 @@ int main() {
     int numAircraft = 1;
     int numChargers = 3;
     int totalTime = 3*60*60*1000; // 3 hours in miliseconds
+    int timeStep = 1;
     // implement something to allow controlled sim speeds and update rate
 
     // randomize how many of each aircraft are flying.
@@ -20,7 +21,7 @@ int main() {
     }
 
     // simulation loop
-    for (int time = 0; time < totalTime; time++) {
+    for (int time = 0; time < totalTime; time += timeStep) {
         // TODO: run class functions to update stats
         for (int i = 0; i < numAircraft; i++) {
             // TODO

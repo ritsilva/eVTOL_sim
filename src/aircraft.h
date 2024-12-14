@@ -2,7 +2,7 @@
 #define AIRCRAFT_H
 
 #include <string>
-#include "../src/logging.h"
+#include "./logging.h"
 using namespace std;
 
 #define HOUR_TO_MS (60*60*1000)
@@ -36,7 +36,7 @@ class Aircraft {
         int timeCharging;       // miliseconds
         int numFaults;
 
-    bool doesFaultOccur(float prob);
+        bool doesFaultOccur(float prob);
 
     public:
         Aircraft(string name,
@@ -48,16 +48,19 @@ class Aircraft {
                  float faultProb);
 
         // proceed 'step' (miliseconds)
-        void updateParameters(int step);
+        void processTime(int step);
+        void beginCharging();
         // returns true if done charging
-        bool charging(int step);
+        bool charge(int step);
         // accessor function
-        inline float getRemainingCharge() {return remainingCharge;}
-        inline Aircraft_states getCurrentState() {return currentState;}
-        inline int getFlightTime() {return flightTime;}
-        inline float getDistanceTraveled() {return distanceTraveled;}
-        inline int getTimeCharging() {return timeCharging;}
-        inline int getNumFaults() {return numFaults;}
+        float getRemainingCharge() {return remainingCharge;}
+        Aircraft_states getCurrentState() {return currentState;}
+        int getFlightTime() {return flightTime;}
+        float getDistanceTraveled() {return distanceTraveled;}
+        int getTimeCharging() {return timeCharging;}
+        int getNumFaults() {return numFaults;}
+        string getName() {return name;}
+        float getPassengerMiles() {return passengerCount*flightTime/HOUR_TO_MS*cruiseSpeed;}
 };
 
 

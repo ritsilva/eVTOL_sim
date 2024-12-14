@@ -5,7 +5,7 @@ using namespace std;
 default_random_engine rand_engine;
 
 
-Aircraft::Aircraft(string name,
+Aircraft::Aircraft(string _name,
                    float _cruiseSpeed,
                    float _batteryCapacity,
                    float _timeToCharge,
@@ -14,7 +14,7 @@ Aircraft::Aircraft(string name,
                    float _faultProb) {
 
                     // static variables that shouldn't change
-                    name = name;
+                    name = _name;
                     cruiseSpeed = _cruiseSpeed;
                     batteryCapacity = _batteryCapacity;
                     timeToCharge = _timeToCharge;
@@ -37,7 +37,7 @@ bool Aircraft::doesFaultOccur(float prob) {
     return d(rand_engine);
 }
 
-void Aircraft::updateParameters(int step) {
+void Aircraft::processTime(int step) {
     flightTime += step;
     distanceTraveled += cruiseSpeed * step / HOUR_TO_MS;
     numFaults += doesFaultOccur(faultProb);
@@ -47,7 +47,11 @@ void Aircraft::updateParameters(int step) {
     }
 }
 
-bool Aircraft::charging(int step) {
+void Aircraft::beginCharging() {
+    currentState = CHARGING;
+}
+
+bool Aircraft::charge(int step) {
     timeCharging += step;
     currentChargingTime += step;
     if(currentChargingTime >= timeToCharge*HOUR_TO_MS) {
