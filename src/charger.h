@@ -12,11 +12,13 @@ enum Charger_states {
     MAX_CHARGER_STATE
 };
 
+string chargerStateToString(Charger_states state);
+
 class Charger {
     private:
         Charger_states currentState;
-        Aircraft* dockedAircraft;
-        vector<Aircraft>* queuedAircraft;
+        // Aircraft* dockedAircraft;
+        vector<Aircraft*> dockedAircraft;
     
     public:
         Charger();
@@ -25,8 +27,8 @@ class Charger {
         void undockAircraft();
 
         Charger_states getChargerState() {return currentState;}
-        int getQueueSize() {return queuedAircraft->size();}
-        string getChargingAircraftName() {return dockedAircraft->getName();}
+        int getQueueSize() {return dockedAircraft.size();}
+        string getChargingAircraftName() {return dockedAircraft[0]->getName();}
 };
 
 #endif // CHARGER_H

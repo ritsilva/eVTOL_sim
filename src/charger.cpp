@@ -2,39 +2,51 @@
 #include "./charger.h"
 using namespace std;
 
+string chargerStateToString(Charger_states state) {
+    switch(state) {
+        case FREE: return "FREE";
+        case OCCUPIED: return "OCCUPIED";
+        case MAX_CHARGER_STATE: return "MAX_CHARGER_STATE";
+        default: return "UNKNOWN";
+    }
+}
+
 Charger::Charger() {
     currentState = FREE;
-    dockedAircraft = NULL;
 }
 
 void Charger::processTime(int step) {
     if(currentState == FREE) {
         return;
     } else {
-        bool isDone = dockedAircraft->charge(step);
+        bool isDone = dockedAircraft[0]->charge(step);
         if(isDone == true) {
             undockAircraft();
-            if(queuedAircraft->size() > 0) {
-                cout << "need to start charging the next aircraft" << endl;
-                // dockAircraft(queuedAircraft[0]);
-                // queuedAircraft->erase(0)
-            }
         }
     }
 }
 
 void Charger::dockAircraft(Aircraft* aircraft) {
-    currentState = OCCUPIED;
-    dockedAircraft = aircraft;
-    dockedAircraft->beginCharging();
+    // charger is free, begin charging
+    if(currentState == FREE) {
+        currentState = OCCUPIED;
+        dockedAircraft.emplace_back(aircraft);
+        dockedAircraft[0]->beginCharging();
+    } else {
+        // need to wait in line
+        dockedAircraft.emplace_back(aircraft);
+    }
 }
 
 void Charger::undockAircraft() {
-    // if(queuedAircraft.size() > 0) {
-    //     dockedAircraft = queuedAircraft[0];
-    //     queuedAircraft.erase(queuedAircraft.begin());
-    // } else {
-    //     dockedAircraft = -1;
-    //     currentState = FREE;
-    // }
+    if(!dockedAircraft.empty()) {
+        dockedAircraft.erase(dockedAircraft.begin());
+        dockedAircraft[0]->beginCharging();
+    } else {
+        currentState = FREE;
+        dockedAircraft.erase(dockedAircraft.begin());
+    }
+
+    currentState = FREE;
+    
 }

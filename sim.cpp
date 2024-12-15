@@ -10,7 +10,8 @@ int main() {
     int numChargers = 3;
     int totalTime = 3*60*60*1000; // 3 hours in miliseconds
     int timeStep = 1;
-    // implement something to allow controlled sim speeds and update rate
+    // implement something to allow controlled sim speeds
+    //  and update rate in case you want to fastforward
 
     // randomize how many of each aircraft are flying.
     vector<Aircraft> flyingAircrafts(numAircraft);

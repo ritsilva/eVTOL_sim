@@ -26,6 +26,7 @@ void test_dockAircraft() {
 
     // deplete the battery
     // aircraft should gound and have no remaining charge
+    logger.log(INFO, "deplete the battery, aircraft should gound and have no remaining charge");
     myAircraft.processTime(1000);
 
     Aircraft_states pre_current_state = myAircraft.getCurrentState();
@@ -38,7 +39,7 @@ void test_dockAircraft() {
     IS_TRUE(myCharger.getChargerState() == OCCUPIED);
 
     IS_TRUE(myAircraft.getCurrentState() == CHARGING);
-    logger.log(DEBUG, "aircraft state: " + to_string(pre_current_state) + " -> " + to_string(post_current_state));
+    logger.log(DEBUG, "aircraft state: " + aircraftStateToString(pre_current_state) + " -> " + aircraftStateToString(post_current_state));
     
     IS_TRUE(myAircraft.getName() == myCharger.getChargingAircraftName());
     logger.log(DEBUG, "aircraft name: " + myAircraft.getName());
@@ -62,11 +63,112 @@ void test_chargerProcessTime() {
     // charger 1
     Charger myCharger;
 
+    // deplete the battery and dock into charging station
+    logger.log(INFO, "deplete the battery and dock into charging station");
+    myAircraft.processTime(1000);
+    myCharger.dockAircraft(&myAircraft);
+
+    // charge aicraft via the charging station
+    // aircraft will finish charing in 36000ms
+    myCharger.processTime(18000);
+
+    IS_TRUE(myCharger.getChargerState() == OCCUPIED);
+    logger.log(DEBUG, "station state after charging a little: " + chargerStateToString(myCharger.getChargerState()));
+
+    IS_TRUE(myAircraft.getCurrentState() == CHARGING);
+    logger.log(DEBUG, "aircraft state after charging a little: " + aircraftStateToString(myAircraft.getCurrentState()));
+}
+
+void test_finishCharging() {
+    Logger logger("./test_finishCharging.log");
+    logger.log(INFO, "running test_finishCharging()");
+
+    // aircraft 1
+    string name = "aircraft_1";
+    float cruiseSpeed = 500;     // mph
+    float batteryCapacity = 1;   // kWh
+    float timeToCharge = 0.01;   // 0.01 hours -> 36000 ms
+    float energyUsage = 10;      // kWh
+    int passengerCount = 4;      // people
+    float faultProb = 0.25;      // probabily/hour
+    Aircraft myAircraft(name, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
+
+    // charger 1
+    Charger myCharger;
+
+    // deplete the battery and dock into charging station
+    myAircraft.processTime(1000);
+    myCharger.dockAircraft(&myAircraft);
+
+    // charge aicraft via the charging station
+    // aircraft will finish charing in 36000ms
+    myCharger.processTime(36000);
+
+    IS_TRUE(myCharger.getChargerState() == FREE);
+    logger.log(DEBUG, "charging station state after aircraft finishes charging: " + chargerStateToString(myCharger.getChargerState()));
+
+    IS_TRUE(myAircraft.getCurrentState() == FLYING);
+    logger.log(DEBUG, "aircraft state after finish charging: " + aircraftStateToString(myAircraft.getCurrentState()));
+}
+
+void test_chargeMultAircraft() {
+    Logger logger("./test_chargeMultAircraft.log");
+    logger.log(INFO, "running test_chargeMultAircraft()");
+
+    // aircrafts
+    string name_1 = "aircraft_1";
+    string name_2 = "aircraft_2";
+    string name_3 = "aircraft_3";
+    float cruiseSpeed = 500;     // mph
+    float batteryCapacity = 1;   // kWh
+    float timeToCharge = 0.01;   // 0.01 hours -> 36000 ms
+    float energyUsage = 10;      // kWh
+    int passengerCount = 4;      // people
+    float faultProb = 0.25;      // probabily/hour
+    Aircraft aircraft_1(name_1, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
+    Aircraft aircraft_2(name_2, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
+    Aircraft aircraft_3(name_3, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
+
+    Charger myCharger;
+    myCharger.dockAircraft(&aircraft_1);
+
+    IS_TRUE(myCharger.getQueueSize() == 1);
+    logger.log(DEBUG, "docked 1 aircraft, aircraft in queue: " + to_string(myCharger.getQueueSize()));
+
+    myCharger.processTime(18000);
+
+    myCharger.dockAircraft(&aircraft_2);
+    IS_TRUE(myCharger.getQueueSize() == 2);
+    logger.log(DEBUG, "docked 2nd aircraft, aircraft in queue: " + to_string(myCharger.getQueueSize()));
+
+    // finish charging first aircraft
+    logger.log(INFO, "finish charging first aircraft");
+    myCharger.processTime(18000);
+
+    IS_TRUE(myCharger.getQueueSize() == 1);
+    logger.log(DEBUG, "first aircraft starts flying, aircraft in queue: " + to_string(myCharger.getQueueSize()));
+    
+    IS_TRUE(myCharger.getChargingAircraftName() == "aircraft_2");
+    logger.log(DEBUG, "aircraft that is now charging: " + myCharger.getChargingAircraftName());
+
+    // finish charging second aircraft
+    logger.log(INFO, "finish charging second aircraft");
+    myCharger.processTime(36000);
+
+    IS_TRUE(myCharger.getQueueSize() == 0);
+    logger.log(DEBUG, "second aircraft starts flying, aircraft in queue: " + to_string(myCharger.getQueueSize()));
+    
+    IS_TRUE(myCharger.getChargingAircraftName() == "aircraft_2");
+    logger.log(DEBUG, "no aircraft should be left in queue: " + myCharger.getChargingAircraftName());
+    cout << "aircraft_2: " + aircraftStateToString(aircraft_2.getCurrentState()) << endl;
+
 }
 
 int main() {
 
-    test_dockAircraft();
-    test_chargerProcessTime();
+    // test_dockAircraft();
+    // test_chargerProcessTime();
+    // test_finishCharging();
+    test_chargeMultAircraft();
     return 0;
 }

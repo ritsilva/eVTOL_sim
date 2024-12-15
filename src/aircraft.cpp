@@ -5,6 +5,16 @@ using namespace std;
 default_random_engine rand_engine;
 
 
+string aircraftStateToString(Aircraft_states state) {
+    switch(state) {
+        case GROUNDED: return "GROUNDED";
+        case FLYING: return "FLYING";
+        case CHARGING: return "CHARGING";
+        case MAX_AIRCRAFT_STATES: return "MAX_AIRCRAFT_STATES";
+        default: return "UNKNOWN";
+    }
+}
+
 Aircraft::Aircraft(string _name,
                    float _cruiseSpeed,
                    float _batteryCapacity,

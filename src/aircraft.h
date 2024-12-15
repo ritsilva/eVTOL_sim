@@ -14,6 +14,8 @@ enum Aircraft_states {
     MAX_AIRCRAFT_STATES
 };
 
+string aircraftStateToString(Aircraft_states state);
+
 class Aircraft {
     private:
         // aircraft parameters

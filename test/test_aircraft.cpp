@@ -25,6 +25,7 @@ void test_processTime() {
     int pre_numFaults = myAircraft.getNumFaults();
 
     // proceed 1 ms and check aircraft stats
+    logger.log(INFO, "proceed 1 ms and check aircraft stats");
     myAircraft.processTime(1);
 
     float post_remainingCharge = myAircraft.getRemainingCharge();
@@ -39,7 +40,7 @@ void test_processTime() {
     logger.log(DEBUG, "remaingCharge: " + to_string(pre_remainingCharge) + " -> " + to_string(post_remainingCharge));
     
     IS_TRUE(post_current_state == pre_current_state);
-    logger.log(DEBUG, "currentState: " + to_string(pre_current_state) + " -> " + to_string(post_current_state));
+    logger.log(DEBUG, "currentState: " + aircraftStateToString(pre_current_state) + " -> " + aircraftStateToString(post_current_state));
     
     IS_TRUE(post_flightTime == pre_flightTime + 1);
     logger.log(DEBUG, "flightTime: " + to_string(pre_flightTime) + " -> " + to_string(post_flightTime));
@@ -74,6 +75,7 @@ void test_charging() {
 
     // deplete the battery
     // aircraft should gound and have no remaining charge
+    logger.log(INFO, "deplete the battery, aircraft should gound and have no remaining charge");
     myAircraft.processTime(1000);
 
     int post_flightTime = myAircraft.getFlightTime();
@@ -88,11 +90,12 @@ void test_charging() {
     logger.log(DEBUG, "remainingCharge: " + to_string(pre_flightTime) + " -> " + to_string(post_remainingCharge));
 
     IS_TRUE(post_current_state == pre_current_state);
-    logger.log(DEBUG, "currentState: " + to_string(pre_current_state) + " -> " + to_string(post_current_state));
+    logger.log(DEBUG, "currentState: " + aircraftStateToString(pre_current_state) + " -> " + aircraftStateToString(post_current_state));
 
 
     // charge the battery
     // aircraft should being flying and battery should refill
+    logger.log(INFO, "aircraft should being flying and battery should refill");
     int pre_timeCharging = myAircraft.getTimeCharging();
 
     myAircraft.charge(36000);
@@ -107,11 +110,7 @@ void test_charging() {
     logger.log(DEBUG, "remainingCharge: " + to_string(post_remainingCharge) + " -> " + to_string(myAircraft.getRemainingCharge()));
 
     IS_TRUE(myAircraft.getCurrentState() == FLYING);
-    logger.log(DEBUG, "currentState: " + to_string(post_current_state) + " -> " + to_string(myAircraft.getCurrentState()));
-
-}
-
-void test_multipleAircraftChargeing() {
+    logger.log(DEBUG, "currentState: " + aircraftStateToString(post_current_state) + " -> " + aircraftStateToString(myAircraft.getCurrentState()));
 
 }
 
@@ -119,7 +118,6 @@ int main() {
 
     test_processTime();
     test_charging();
-    test_multipleAircraftChargeing();
 
     return 0;
 }
