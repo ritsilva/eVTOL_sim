@@ -15,6 +15,14 @@ Charger::Charger() {
     currentState = FREE;
 }
 
+string Charger::getChargingAircraftName() {
+    if(dockedAircraft.size() != 0) {
+        return dockedAircraft[0]->getName();
+    } else {
+        return "NULL";
+    }
+}
+
 void Charger::processTime(int step) {
     if(currentState == FREE) {
         return;
@@ -39,14 +47,11 @@ void Charger::dockAircraft(Aircraft* aircraft) {
 }
 
 void Charger::undockAircraft() {
+    // remove aircraft that is done charging
+    dockedAircraft.erase(dockedAircraft.begin());
     if(!dockedAircraft.empty()) {
-        dockedAircraft.erase(dockedAircraft.begin());
         dockedAircraft[0]->beginCharging();
     } else {
         currentState = FREE;
-        dockedAircraft.erase(dockedAircraft.begin());
-    }
-
-    currentState = FREE;
-    
+    }    
 }

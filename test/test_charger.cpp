@@ -146,6 +146,8 @@ void test_chargeMultAircraft() {
     myCharger.processTime(18000);
 
     IS_TRUE(myCharger.getQueueSize() == 1);
+    IS_TRUE(aircraft_1.getCurrentState() == FLYING);
+    IS_TRUE(aircraft_2.getCurrentState() == CHARGING);
     logger.log(DEBUG, "first aircraft starts flying, aircraft in queue: " + to_string(myCharger.getQueueSize()));
     
     IS_TRUE(myCharger.getChargingAircraftName() == "aircraft_2");
@@ -158,17 +160,18 @@ void test_chargeMultAircraft() {
     IS_TRUE(myCharger.getQueueSize() == 0);
     logger.log(DEBUG, "second aircraft starts flying, aircraft in queue: " + to_string(myCharger.getQueueSize()));
     
-    IS_TRUE(myCharger.getChargingAircraftName() == "aircraft_2");
+    IS_TRUE(myCharger.getChargingAircraftName() == "NULL");
     logger.log(DEBUG, "no aircraft should be left in queue: " + myCharger.getChargingAircraftName());
-    cout << "aircraft_2: " + aircraftStateToString(aircraft_2.getCurrentState()) << endl;
 
+    IS_TRUE(aircraft_2.getCurrentState() == FLYING);
+    logger.log(DEBUG, "aircraft_2 should now be flying, current state: " + aircraftStateToString(aircraft_2.getCurrentState()));
 }
 
 int main() {
 
-    // test_dockAircraft();
-    // test_chargerProcessTime();
-    // test_finishCharging();
+    test_dockAircraft();
+    test_chargerProcessTime();
+    test_finishCharging();
     test_chargeMultAircraft();
     return 0;
 }
