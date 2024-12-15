@@ -48,17 +48,31 @@ bool Aircraft::doesFaultOccur(float prob) {
 }
 
 void Aircraft::processTime(int step) {
+    // dont want to make the aircraft fly if it is charging
+    if(currentState != FLYING) {
+        return;
+    }
+
     flightTime += step;
     distanceTraveled += cruiseSpeed * step / HOUR_TO_MS;
     numFaults += doesFaultOccur(faultProb);
     remainingCharge -= energyUsage * cruiseSpeed * step / HOUR_TO_MS;
-    if (remainingCharge < 0) {
+    if(remainingCharge < 0) {
         currentState = GROUNDED;
+        // cout << name + " ran out of charge at time " + to_string(flightTime) << endl;
     }
+}
+
+void Aircraft::beginFlying() {
+    currentState = FLYING;
 }
 
 void Aircraft::beginCharging() {
     currentState = CHARGING;
+}
+
+void Aircraft::dockIntoCharger() {
+    currentState = DOCKED;
 }
 
 bool Aircraft::charge(int step) {

@@ -17,7 +17,6 @@ string chargerStateToString(Charger_states state);
 class Charger {
     private:
         Charger_states currentState;
-        // Aircraft* dockedAircraft;
         vector<Aircraft*> dockedAircraft;
     
     public:
@@ -28,7 +27,7 @@ class Charger {
 
         Charger_states getChargerState() {return currentState;}
         int getQueueSize() {return dockedAircraft.size();}
-        string getChargingAircraftName() {return dockedAircraft[0]->getName();}
+        string getChargingAircraftName();
 };
 
 #endif // CHARGER_H

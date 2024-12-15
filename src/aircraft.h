@@ -10,6 +10,7 @@ using namespace std;
 enum Aircraft_states {
     GROUNDED,
     FLYING,
+    DOCKED,
     CHARGING,
     MAX_AIRCRAFT_STATES
 };
@@ -52,6 +53,9 @@ class Aircraft {
         // proceed 'step' (miliseconds)
         void processTime(int step);
         void beginCharging();
+        void beginFlying();
+        void dockIntoCharger();
+
         // returns true if done charging
         bool charge(int step);
         // accessor function

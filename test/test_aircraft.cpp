@@ -26,6 +26,7 @@ void test_processTime() {
 
     // proceed 1 ms and check aircraft stats
     logger.log(INFO, "proceed 1 ms and check aircraft stats");
+    myAircraft.beginFlying();
     myAircraft.processTime(1);
 
     float post_remainingCharge = myAircraft.getRemainingCharge();
@@ -39,7 +40,8 @@ void test_processTime() {
     IS_TRUE(post_remainingCharge == pre_remainingCharge - energyUsage * cruiseSpeed * 1/HOUR_TO_MS);
     logger.log(DEBUG, "remaingCharge: " + to_string(pre_remainingCharge) + " -> " + to_string(post_remainingCharge));
     
-    IS_TRUE(post_current_state == pre_current_state);
+    IS_TRUE(pre_current_state == GROUNDED)
+    IS_TRUE(post_current_state == FLYING);
     logger.log(DEBUG, "currentState: " + aircraftStateToString(pre_current_state) + " -> " + aircraftStateToString(post_current_state));
     
     IS_TRUE(post_flightTime == pre_flightTime + 1);
@@ -76,6 +78,7 @@ void test_charging() {
     // deplete the battery
     // aircraft should gound and have no remaining charge
     logger.log(INFO, "deplete the battery, aircraft should gound and have no remaining charge");
+    myAircraft.beginFlying();
     myAircraft.processTime(1000);
 
     int post_flightTime = myAircraft.getFlightTime();

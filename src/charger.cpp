@@ -42,6 +42,7 @@ void Charger::dockAircraft(Aircraft* aircraft) {
         dockedAircraft[0]->beginCharging();
     } else {
         // need to wait in line
+        aircraft->dockIntoCharger();
         dockedAircraft.emplace_back(aircraft);
     }
 }

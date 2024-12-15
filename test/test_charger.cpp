@@ -27,6 +27,7 @@ void test_dockAircraft() {
     // deplete the battery
     // aircraft should gound and have no remaining charge
     logger.log(INFO, "deplete the battery, aircraft should gound and have no remaining charge");
+    myAircraft.beginFlying();
     myAircraft.processTime(1000);
 
     Aircraft_states pre_current_state = myAircraft.getCurrentState();
@@ -65,6 +66,7 @@ void test_chargerProcessTime() {
 
     // deplete the battery and dock into charging station
     logger.log(INFO, "deplete the battery and dock into charging station");
+    myAircraft.beginFlying();
     myAircraft.processTime(1000);
     myCharger.dockAircraft(&myAircraft);
 
@@ -97,6 +99,7 @@ void test_finishCharging() {
     Charger myCharger;
 
     // deplete the battery and dock into charging station
+    myAircraft.beginFlying();
     myAircraft.processTime(1000);
     myCharger.dockAircraft(&myAircraft);
 
@@ -118,7 +121,6 @@ void test_chargeMultAircraft() {
     // aircrafts
     string name_1 = "aircraft_1";
     string name_2 = "aircraft_2";
-    string name_3 = "aircraft_3";
     float cruiseSpeed = 500;     // mph
     float batteryCapacity = 1;   // kWh
     float timeToCharge = 0.01;   // 0.01 hours -> 36000 ms
@@ -127,7 +129,6 @@ void test_chargeMultAircraft() {
     float faultProb = 0.25;      // probabily/hour
     Aircraft aircraft_1(name_1, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
     Aircraft aircraft_2(name_2, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
-    Aircraft aircraft_3(name_3, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
 
     Charger myCharger;
     myCharger.dockAircraft(&aircraft_1);
