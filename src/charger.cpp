@@ -31,6 +31,10 @@ void Charger::processTime(int step) {
         if(isDone == true) {
             undockAircraft();
         }
+
+        for(int i = 1; i < dockedAircraft.size(); i++) {
+            dockedAircraft[i]->processTime(step);
+        }
     }
 }
 

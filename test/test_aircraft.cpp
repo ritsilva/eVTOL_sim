@@ -21,7 +21,7 @@ void test_processTime() {
     Aircraft_states pre_current_state = myAircraft.getCurrentState();
     int pre_flightTime = myAircraft.getFlightTime();
     float pre_distanceTraveled = myAircraft.getDistanceTraveled();
-    int pre_timeCharging = myAircraft.getTimeCharging();
+    int pre_timeCharging = myAircraft.getCurrentChargingTime();
     int pre_numFaults = myAircraft.getNumFaults();
 
     // proceed 1 ms and check aircraft stats
@@ -33,7 +33,7 @@ void test_processTime() {
     Aircraft_states post_current_state = myAircraft.getCurrentState();
     int post_flightTime = myAircraft.getFlightTime();
     float post_distanceTraveled = myAircraft.getDistanceTraveled();
-    int post_timeCharging = myAircraft.getTimeCharging();
+    int post_timeCharging = myAircraft.getCurrentChargingTime();
     int post_numFaults = myAircraft.getNumFaults();
 
 
@@ -81,7 +81,7 @@ void test_charging() {
     myAircraft.beginFlying();
     myAircraft.processTime(1000);
 
-    int post_flightTime = myAircraft.getFlightTime();
+    int post_flightTime = myAircraft.getPastFlightTimes()[0];
     float post_remainingCharge = myAircraft.getRemainingCharge();
     Aircraft_states post_current_state = myAircraft.getCurrentState();
 
@@ -99,14 +99,14 @@ void test_charging() {
     // charge the battery
     // aircraft should being flying and battery should refill
     logger.log(INFO, "aircraft should being flying and battery should refill");
-    int pre_timeCharging = myAircraft.getTimeCharging();
+    int pre_timeCharging = myAircraft.getCurrentChargingTime();
 
     myAircraft.charge(36000);
 
-    int post_timeCharging = myAircraft.getTimeCharging();
+    int post_timeCharging = myAircraft.getPastChargingTimes()[0];
 
     // logging outcome of charging
-    IS_TRUE(myAircraft.getTimeCharging() == pre_timeCharging + 36000);
+    IS_TRUE(post_timeCharging == pre_timeCharging + 36000);
     logger.log(DEBUG, "timeCharging: " + to_string(pre_timeCharging) + " -> " + to_string(post_timeCharging));
 
     IS_TRUE(myAircraft.getRemainingCharge() == batteryCapacity);

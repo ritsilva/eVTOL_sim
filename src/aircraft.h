@@ -2,6 +2,7 @@
 #define AIRCRAFT_H
 
 #include <string>
+#include <vector>
 #include "./logging.h"
 using namespace std;
 
@@ -37,7 +38,12 @@ class Aircraft {
         int flightTime;         // miliseconds
         float distanceTraveled; // miles
         int timeCharging;       // miliseconds
+        int timeWaiting;        // miliseconds
         int numFaults;
+
+        vector<int> pastFlightTimes;
+        vector<int> pastFlightDistances;
+        vector<int> pastChargingTimes;
 
         bool doesFaultOccur(float prob);
 
@@ -55,18 +61,26 @@ class Aircraft {
         void beginCharging();
         void beginFlying();
         void dockIntoCharger();
-
         // returns true if done charging
         bool charge(int step);
+
         // accessor function
         float getRemainingCharge() {return remainingCharge;}
         Aircraft_states getCurrentState() {return currentState;}
         int getFlightTime() {return flightTime;}
         float getDistanceTraveled() {return distanceTraveled;}
-        int getTimeCharging() {return timeCharging;}
+        int getCurrentChargingTime() {return currentChargingTime;}
         int getNumFaults() {return numFaults;}
         string getName() {return name;}
-        float getPassengerMiles() {return passengerCount*flightTime/HOUR_TO_MS*cruiseSpeed;}
+
+        float getPassengerMiles();
+        vector<int> getPastFlightTimes() {return pastFlightTimes;}
+        vector<int> getPastDistanceTraveled() {return pastFlightDistances;}
+        vector<int> getPastChargingTimes() {return pastChargingTimes;}
+
+        float getAvgFlightTime();
+        float getAvgDistanceTraveled();
+        float getAvgChargingTimes();
 };
 
 
