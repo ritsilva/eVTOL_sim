@@ -27,4 +27,6 @@ For running unit tests execute:
 - ```g++ ./src/*.cpp ./test/test_charger.cpp -o charger_test.exe```
 - ```g++ ./src/*.cpp ./test/test_simloop.cpp -o simloop_test.exe```
 
-Each executable will output the results to the console and create a log file for each unit test in the file.
+Each executable will output the results to the console and create a log file for each unit test with the name of the log being the name of the test.
+
+NOTE: In hindsight it would have been better to implment the unit tests using google test for mocking but I'm unfamiliar with the library and thought it would take too long for the purposes of this project. 
