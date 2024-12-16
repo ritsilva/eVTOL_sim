@@ -123,8 +123,12 @@ int main() {
         // does not make sense to check before processing 
         // the aircraft that are already charging
         // NOTE: you could potentially get a better estimate for the 
-        // shortest queue time by taking the sum of all the aircraft that 
-        // are in a chargers queue.
+        // shortest queue time by taking the sum of all the aircraft  
+        // capacities that are in a charger's queue.
+        // alternativly you could implement a shared queue for all chargers. 
+        // that way once an aircraft finishes charging which ever aircraft 
+        // is next in line, reguardless of what station it landed at, could
+        // begin charging immediately
         for(const int &index : aircraftNeedingCharge) {
             int shortestQueue = 0;
             int lenOfShortestQueue = chargerGroup[0].getQueueSize();

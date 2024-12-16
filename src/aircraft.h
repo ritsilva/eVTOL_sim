@@ -16,11 +16,12 @@ enum Aircraft_states {
     MAX_AIRCRAFT_STATES
 };
 
+// function used to express Aircraft_states in testing
 string aircraftStateToString(Aircraft_states state);
 
 class Aircraft {
     private:
-        // aircraft parameters
+        // aircraft parameters - things that shouldn't change
         string name;
         float cruiseSpeed;        // mph
         float batteryCapacity;    // kWh
@@ -29,7 +30,7 @@ class Aircraft {
         int passengerCount;       // people
         float faultProb;          // probabily/hour
 
-        // aircraft stats
+        // aircraft stats - variable for keep track of current processes
         float remainingCharge;
         int currentChargingTime;
         Aircraft_states currentState;
@@ -41,13 +42,17 @@ class Aircraft {
         int timeWaiting;        // miliseconds
         int numFaults;
 
+        // variables for keeping track of previous processes
         vector<int> pastFlightTimes;
         vector<int> pastFlightDistances;
         vector<int> pastChargingTimes;
 
+        // function used to calculate if a fault occurs
+        // bases on the probability you give it (prob)
         bool doesFaultOccur(float prob);
 
     public:
+        // constructor
         Aircraft(string name,
                  float cruiseSpeed,
                  float batteryCapacity,
@@ -56,15 +61,22 @@ class Aircraft {
                  int passengerCount,
                  float faultProb);
 
-        // proceed 'step' (miliseconds)
+        // proceed 1 'step' of time (miliseconds)
         void processTime(int step);
+
+        // change aircraft state to charging
         void beginCharging();
+
+        // change aircraft state to flying
         void beginFlying();
+
+        // change aircraft state to grounded
         void dockIntoCharger();
+
         // returns true if done charging
         bool charge(int step);
 
-        // accessor function
+        // accessor functions
         float getRemainingCharge() {return remainingCharge;}
         Aircraft_states getCurrentState() {return currentState;}
         int getFlightTime() {return flightTime;}
@@ -73,6 +85,7 @@ class Aircraft {
         int getNumFaults() {return numFaults;}
         string getName() {return name;}
 
+        // accessor functions for past data
         float getPassengerMiles();
         vector<int> getPastFlightTimes() {return pastFlightTimes;}
         vector<int> getPastDistanceTraveled() {return pastFlightDistances;}

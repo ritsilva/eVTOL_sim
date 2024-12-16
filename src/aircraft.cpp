@@ -24,6 +24,10 @@ Aircraft::Aircraft(string _name,
                    float _faultProb) {
 
                     // static variables that shouldn't change
+                    // NOTE: depending on the usage of this class you could argue
+                    // that you would want to convert each of these parameters to
+                    // use miliseconds on init rather than doing it when ever you 
+                    // have calculate something and use '#define HOUR_TO_MS'
                     name = _name;
                     cruiseSpeed = _cruiseSpeed;
                     batteryCapacity = _batteryCapacity;
@@ -52,8 +56,9 @@ void Aircraft::processTime(int step) {
     if(currentState == FLYING) {
         flightTime += step;
         distanceTraveled += cruiseSpeed * step / HOUR_TO_MS;
-        numFaults += doesFaultOccur(faultProb/HOUR_TO_MS * step);
+        numFaults += doesFaultOccur(faultProb / HOUR_TO_MS * step);
         remainingCharge -= energyUsage * cruiseSpeed * step / HOUR_TO_MS;
+
         if(remainingCharge < 0) {
             currentState = GROUNDED;
             pastFlightTimes.push_back(flightTime);
@@ -61,14 +66,19 @@ void Aircraft::processTime(int step) {
             distanceTraveled = 0;
             flightTime = 0;
         }
+
     } else if(currentState == GROUNDED) {
+        // keeping track of how long the aircraft is waiting to charge
         timeWaiting += step;
     }
 
 }
 
 void Aircraft::beginFlying() {
-    currentState = FLYING;
+    // can't start flying if you don't have any charge
+    if(remainingCharge < 0) {
+        currentState = FLYING;
+    }
 }
 
 void Aircraft::dockIntoCharger() {
@@ -80,6 +90,11 @@ void Aircraft::beginCharging() {
 }
 
 bool Aircraft::charge(int step) {
+    // don't want to charge unless the charging station initiates it
+    if(currentState != CHARGING) {
+        return false;
+    }
+    
     currentChargingTime += step;
     if(currentChargingTime >= timeToCharge*HOUR_TO_MS) {
         remainingCharge = batteryCapacity;

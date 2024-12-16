@@ -24,14 +24,20 @@ string Charger::getChargingAircraftName() {
 }
 
 void Charger::processTime(int step) {
+    // if no aircraft charing do nothing
     if(currentState == FREE) {
         return;
     } else {
+        // charge aircraft 
         bool isDone = dockedAircraft[0]->charge(step);
+        
+        // done charging current aircraft
         if(isDone == true) {
             undockAircraft();
         }
 
+        // record how long each of the other aircrafts
+        // are waiting in line for
         for(int i = 1; i < dockedAircraft.size(); i++) {
             dockedAircraft[i]->processTime(step);
         }
@@ -54,6 +60,8 @@ void Charger::dockAircraft(Aircraft* aircraft) {
 void Charger::undockAircraft() {
     // remove aircraft that is done charging
     dockedAircraft.erase(dockedAircraft.begin());
+    
+    // beging charging the next aircraft if there is any
     if(!dockedAircraft.empty()) {
         dockedAircraft[0]->beginCharging();
     } else {
