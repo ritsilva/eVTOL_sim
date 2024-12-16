@@ -178,7 +178,7 @@ void test_simGatherData() {
 
 int main() {
 
-    // test_simloop();
+    test_simloop();
     test_simGatherData();
 
     return 0;

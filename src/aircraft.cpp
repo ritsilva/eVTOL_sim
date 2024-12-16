@@ -110,7 +110,7 @@ float Aircraft::getAvgFlightTime() {
 
     if(flightTime != 0) {
         avgFlightTime = avgFlightTime/(pastFlightTimes.size() + 1); // plus 1 to acocunt for current trip
-    } else {
+    } else if(pastFlightTimes.size() != 0) {
         avgFlightTime = avgFlightTime/pastFlightTimes.size();
     }
 
@@ -126,7 +126,7 @@ float Aircraft::getAvgDistanceTraveled() {
 
     if(distanceTraveled != 0) {
         avgDistance = avgDistance/(pastFlightDistances.size() + 1); // plus 1 to acocunt for current trip
-    } else {
+    } else if(pastFlightDistances.size() != 0) {
         avgDistance = avgDistance/pastFlightTimes.size();
     }
 
@@ -141,10 +141,9 @@ float Aircraft::getAvgChargingTimes() {
 
     if(currentChargingTime != 0) {
         avgChargingTime = avgChargingTime/(pastChargingTimes.size() + 1); // plus 1 to acocunt for current trip
-    } else {
+    } else if(pastChargingTimes.size() != 0) {
         avgChargingTime = avgChargingTime/pastChargingTimes.size();
     }
-
     return avgChargingTime;
 }
 
