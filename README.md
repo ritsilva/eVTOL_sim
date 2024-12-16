@@ -1,11 +1,10 @@
 # eVTOL_sim
-This is a simple simulation environment for exercising behavoir of electric aircraft and charging stations
-For full details on the requirements for this project see [this document](https://github.com/ritsilva/eVTOL_sim/blob/274978f71cffba0e9c7ea2ba12ef77372b367780/eVtol%20Simulation%20Problem%20-%20AnyTimeDomain%20V2.docx).
+This is a simple simulation environment for exercising behavoir of electric aircraft and charging stations. For full details on the requirements for this project see [this document](https://github.com/ritsilva/eVTOL_sim/blob/274978f71cffba0e9c7ea2ba12ef77372b367780/eVtol%20Simulation%20Problem%20-%20AnyTimeDomain%20V2.docx).
 
 # Aircraft behavior
-Each aircraft has 7 defined characteristics; Cruise Speed (mph), Battery Capacity (kWh), Time to Charge (hours), Energy use at Cruise (kWh/mile), Passenger Count, and Probability of fault per hour. For ease of computation, despite the units of the aircraft's characteristics, all internal computations are done in the time scale of miliseconds. 
+Each aircraft has 7 defined characteristics; Cruise Speed (mph), Battery Capacity (kWh), Time to Charge (hours), Energy use at Cruise (kWh/mile), Passenger Count, and Probability of fault per hour. For ease of computation, despite the units of the aircraft's characteristics, all internal computations are converted and done in the time scale of miliseconds. 
 
-Each aircraft shall start fully charged and begin flying immediately. Once the aircraft runs out of charge it will dock into a charging station and wait to be charged. Once it is fully charged it will begin flying again.
+Each aircraft shall start fully charged. Once the aircraft runs out of charge it will dock into a charging station and wait to be charged. Once it is fully charged it will begin flying again.
 
 
 # Charger behavior
@@ -17,4 +16,15 @@ Work can be done to report the total time it would take for all queued aircraft 
 You could potentially argue that all the charging stations are very close to one another such that it doesn't matter where the aircraft lands since it will be able access any of the chargering stations once it has become free. Mimicing the structure of a gas station. If this were the case you may want to implement a shared queue for all the chargering stations rather than the independent queues in the current implementation. This would allow for the shortest charging/waiting time from all the proposed strategies but probably the most difficult to realize in a real environment.
 
 # Building and running unit tests
-todo
+This project was compiled using g++ 13.2.0
+
+For compiling code execute ```g++ ./src/*.cpp ./sim.cpp -o myprogram.exe```
+
+Running this executable will generate a log file called ```sim.log```
+
+For running unit tests execute: 
+- ```g++ ./src/*.cpp ./test/test_aircraft.cpp -o aircraft_test.exe```
+- ```g++ ./src/*.cpp ./test/test_charger.cpp -o charger_test.exe```
+- ```g++ ./src/*.cpp ./test/test_simloop.cpp -o simloop_test.exe```
+
+Each executable will output the results to the console and create a log file for each unit test in the file.
