@@ -16,8 +16,8 @@ Charger::Charger() {
 }
 
 string Charger::getChargingAircraftName() {
-    if(dockedAircraft.size() != 0) {
-        return dockedAircraft[0]->getName();
+    if(dockedAircraftQueue.size() != 0) {
+        return dockedAircraftQueue[0]->getName();
     } else {
         return "NULL";
     }
@@ -29,7 +29,7 @@ void Charger::processTime(int step) {
         return;
     } else {
         // charge aircraft 
-        bool isDone = dockedAircraft[0]->charge(step);
+        bool isDone = dockedAircraftQueue[0]->charge(step);
         
         // done charging current aircraft
         if(isDone == true) {
@@ -38,8 +38,8 @@ void Charger::processTime(int step) {
 
         // record how long each of the other aircrafts
         // are waiting in line for
-        for(int i = 1; i < dockedAircraft.size(); i++) {
-            dockedAircraft[i]->processTime(step);
+        for(int i = 1; i < dockedAircraftQueue.size(); i++) {
+            dockedAircraftQueue[i]->processTime(step);
         }
     }
 }
@@ -48,23 +48,31 @@ void Charger::dockAircraft(Aircraft* aircraft) {
     // charger is free, begin charging
     if(currentState == FREE) {
         currentState = OCCUPIED;
-        dockedAircraft.emplace_back(aircraft);
-        dockedAircraft[0]->beginCharging();
+        dockedAircraftQueue.emplace_back(aircraft);
+        dockedAircraftQueue[0]->beginCharging();
     } else {
         // need to wait in line
         aircraft->dockIntoCharger();
-        dockedAircraft.emplace_back(aircraft);
+        dockedAircraftQueue.emplace_back(aircraft);
     }
 }
 
 void Charger::undockAircraft() {
     // remove aircraft that is done charging
-    dockedAircraft.erase(dockedAircraft.begin());
+    dockedAircraftQueue.erase(dockedAircraftQueue.begin());
     
     // beging charging the next aircraft if there is any
-    if(!dockedAircraft.empty()) {
-        dockedAircraft[0]->beginCharging();
+    if(!dockedAircraftQueue.empty()) {
+        dockedAircraftQueue[0]->beginCharging();
     } else {
         currentState = FREE;
     }    
+}
+
+int Charger::getQueueWaitTime() {
+    float waitTime = dockedAircraftQueue[0]->getChargeTime() - dockedAircraftQueue[0]->getCurrentChargingTime();
+    for(int i = 1; i < dockedAircraftQueue.size(); i++) {
+        waitTime += dockedAircraftQueue[i]->getChargeTime();
+    }
+    return waitTime;
 }

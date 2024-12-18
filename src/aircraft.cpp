@@ -9,6 +9,7 @@ string aircraftStateToString(Aircraft_states state) {
     switch(state) {
         case GROUNDED: return "GROUNDED";
         case FLYING: return "FLYING";
+        case DOCKED: return "DOCKED";
         case CHARGING: return "CHARGING";
         case MAX_AIRCRAFT_STATES: return "MAX_AIRCRAFT_STATES";
         default: return "UNKNOWN";
@@ -76,7 +77,7 @@ void Aircraft::processTime(int step) {
 
 void Aircraft::beginFlying() {
     // can't start flying if you don't have any charge
-    if(remainingCharge < 0) {
+    if(remainingCharge > 0) {
         currentState = FLYING;
     }
 }
@@ -90,6 +91,12 @@ void Aircraft::beginCharging() {
 }
 
 bool Aircraft::charge(int step) {
+    // NOTE: there is an edge case that is not handled in this logic
+    // where if step > 1, i.e. we are fastforwarding or jumping time 
+    // we may charge for longer than is necessary. This is something 
+    // that I will have to put more thought into to figure out how to 
+    // handle.
+
     // don't want to charge unless the charging station initiates it
     if(currentState != CHARGING) {
         return false;

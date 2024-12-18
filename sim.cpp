@@ -15,8 +15,9 @@ int main() {
     int numChargers = 3;
     int totalTime = 3 * HOUR_TO_MS; // 3 hours in miliseconds
     int timeStep = 1;
-    // implement something to allow controlled sim speeds
-    // and update rate in case you want to fastforward
+    // NOTE: implement something to allow controlled sim speeds
+    // and update rate in case you want to fastforward or jump 
+    // to predetermined amounts of time
 
     logger.log(INFO, "Running simulation with:");
     logger.log(INFO, "numAircraft: " + to_string(numAircraft));
@@ -24,8 +25,8 @@ int main() {
     logger.log(INFO, "totalTime(hrs): " + to_string(totalTime/HOUR_TO_MS));
 
     // randomize how many of each aircraft there are.
-    vector<Aircraft> aircraftGroup;
-    vector<Charger> chargerGroup;
+    vector<Aircraft> aircrafts;
+    vector<Charger> chargers;
     for (int i =0; i < numAircraft; i++) {
         int type = rand()%(5);
         string name = "Alpha Company";
@@ -88,35 +89,35 @@ int main() {
             break;
         }
         Aircraft newAircraft(name, cruiseSpeed, batteryCapacity, timeToCharge, energyUsage, passengerCount, faultProb);
-        aircraftGroup.push_back(newAircraft);
+        aircrafts.push_back(newAircraft);
     }
 
     for(int i = 0; i < numChargers; i++) {
         Charger newCharger;
-        chargerGroup.push_back(newCharger);
+        chargers.push_back(newCharger);
     }
 
     // start flying aircraft
-    for(int i = 0; i < aircraftGroup.size(); i++) {
-        aircraftGroup[i].beginFlying();
+    for(int i = 0; i < aircrafts.size(); i++) {
+        aircrafts[i].beginFlying();
     }
 
     // simulation loop
     for (int time = 0; time < totalTime; time += timeStep) {
         vector<int> aircraftNeedingCharge;
         // process flying aircraft
-        for(int j = 0; j < aircraftGroup.size(); j++) {
-            if(aircraftGroup[j].getCurrentState() == FLYING) {
-                aircraftGroup[j].processTime(timeStep);
-            } else if(aircraftGroup[j].getCurrentState() == GROUNDED) {
-                logger.log(DEBUG, aircraftGroup[j].getName() + " grounded for charging at " + to_string(time));
+        for(int j = 0; j < aircrafts.size(); j++) {
+            if(aircrafts[j].getCurrentState() == FLYING) {
+                aircrafts[j].processTime(timeStep);
+            } else if(aircrafts[j].getCurrentState() == GROUNDED) {
+                logger.log(DEBUG, aircrafts[j].getName() + " grounded for charging at " + to_string(time));
                 aircraftNeedingCharge.push_back(j);
             }
         }
 
         // process charing aircraft
-        for(int j = 0; j < chargerGroup.size(); j++) {
-            chargerGroup[j].processTime(timeStep);
+        for(int j = 0; j < chargers.size(); j++) {
+            chargers[j].processTime(timeStep);
         }
 
         // check if there are any aircraft that need to be charged
@@ -131,21 +132,21 @@ int main() {
         // begin charging immediately
         for(const int &index : aircraftNeedingCharge) {
             int shortestQueue = 0;
-            int lenOfShortestQueue = chargerGroup[0].getQueueSize();
-            for(int j = 0; j < chargerGroup.size(); j++) {
-                if(chargerGroup[j].getQueueSize() < lenOfShortestQueue) shortestQueue = j;
+            int lenOfShortestQueue = chargers[0].getQueueSize();
+            for(int j = 0; j < chargers.size(); j++) {
+                if(chargers[j].getQueueSize() < lenOfShortestQueue) shortestQueue = j;
             }
-            logger.log(DEBUG, "docking " + aircraftGroup[index].getName() + " into charger " + to_string(shortestQueue));
-            chargerGroup[shortestQueue].dockAircraft(&aircraftGroup[index]);
+            logger.log(DEBUG, "docking " + aircrafts[index].getName() + " into charger " + to_string(shortestQueue));
+            chargers[shortestQueue].dockAircraft(&aircrafts[index]);
         }
     }
 
     // gather stats for each aircraft type
     vector<string> names;
-    for(int i = 0; i < aircraftGroup.size(); i++) {
+    for(int i = 0; i < aircrafts.size(); i++) {
         // get unique aircraft names
-        if(!(find(names.begin(), names.end(), aircraftGroup[i].getName()) != names.end())) {
-            names.push_back(aircraftGroup[i].getName());
+        if(!(find(names.begin(), names.end(), aircrafts[i].getName()) != names.end())) {
+            names.push_back(aircrafts[i].getName());
         }
     }
 
@@ -156,13 +157,13 @@ int main() {
         float passengerMiles = 0;
         int totalFaults = 0;
         int numAircraft = 0;
-        for(int i = 0; i < aircraftGroup.size(); i++) {
-            if(aircraftGroup[i].getName() == myName) {
-                avgFlightTime += aircraftGroup[i].getAvgFlightTime();
-                avgDistanceTraveled += aircraftGroup[i].getAvgDistanceTraveled();
-                avgChargingTime += aircraftGroup[i].getAvgChargingTimes();
-                passengerMiles += aircraftGroup[i].getPassengerMiles();
-                totalFaults += aircraftGroup[i].getNumFaults();
+        for(int i = 0; i < aircrafts.size(); i++) {
+            if(aircrafts[i].getName() == myName) {
+                avgFlightTime += aircrafts[i].getAvgFlightTime();
+                avgDistanceTraveled += aircrafts[i].getAvgDistanceTraveled();
+                avgChargingTime += aircrafts[i].getAvgChargingTimes();
+                passengerMiles += aircrafts[i].getPassengerMiles();
+                totalFaults += aircrafts[i].getNumFaults();
                 numAircraft ++;
             }
         }

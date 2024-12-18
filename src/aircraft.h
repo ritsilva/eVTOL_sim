@@ -77,6 +77,7 @@ class Aircraft {
         bool charge(int step);
 
         // accessor functions
+        float getChargeTime() {return timeToCharge*HOUR_TO_MS;}
         float getRemainingCharge() {return remainingCharge;}
         Aircraft_states getCurrentState() {return currentState;}
         int getFlightTime() {return flightTime;}
