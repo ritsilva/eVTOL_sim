@@ -2,7 +2,7 @@
 This is a simple simulation environment for exercising behavoir of electric aircraft and charging stations. For full details on the requirements for this project see [this document](https://github.com/ritsilva/eVTOL_sim/blob/274978f71cffba0e9c7ea2ba12ef77372b367780/eVtol%20Simulation%20Problem%20-%20AnyTimeDomain%20V2.docx).
 
 # Aircraft behavior
-Each aircraft has 7 defined characteristics; Cruise Speed (mph), Battery Capacity (kWh), Time to Charge (hours), Energy use at Cruise (kWh/mile), Passenger Count, and Probability of fault per hour. For ease of computation, despite the units of the aircraft's characteristics, all internal computations are converted and done in the time scale of miliseconds. 
+Each aircraft has 7 defined characteristics; name, Cruise Speed (mph), Battery Capacity (kWh), Time to Charge (hours), Energy use at Cruise (kWh/mile), Passenger Count, and Probability of fault per hour. For ease of computation, despite the units of the aircraft's characteristics, all internal computations are converted and done in the time scale of milliseconds. 
 
 Each aircraft shall start fully charged. Once the aircraft runs out of charge it will dock into a charging station and wait to be charged. Once it is fully charged it will begin flying again.
 
@@ -29,4 +29,4 @@ For running unit tests execute:
 
 Each executable will output the results to the console and create a log file for each unit test with the name of the log being the name of the test.
 
-NOTE: In hindsight it would have been better to implment the unit tests using google test for mocking but I'm unfamiliar with the library and thought it would take too long for the purposes of this project. 
+NOTE: In hindsight it would have been better to implment the unit tests using google test for mocking Aircraft class and Charger class but I'm unfamiliar with the library and thought it would take too long to learn and implment for the purposes of this project. 
