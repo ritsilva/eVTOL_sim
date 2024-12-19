@@ -19,6 +19,11 @@ enum Aircraft_states {
 // function used to express Aircraft_states in testing
 string aircraftStateToString(Aircraft_states state);
 
+
+// NOTE: I considered making inheriated classes for differing aircraft types.
+// This would allow for custom behavior and parameters for each aircraft.
+// Given more time I would try implementing this to allow for further development
+// of the simulation models for each aircraft and addition of new aircrafts.
 class Aircraft {
     private:
         // aircraft parameters - things that shouldn't change

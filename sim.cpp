@@ -8,7 +8,7 @@ using namespace std;
 
 int main() {
     Logger logger("./sim.log");
-    srand(12152024);
+    srand(time(0));
 
     // simulation parameters
     int numAircraft = 20;
@@ -29,13 +29,13 @@ int main() {
     vector<Charger> chargers;
     for (int i =0; i < numAircraft; i++) {
         int type = rand()%(5);
-        string name = "Alpha Company";
-        float cruiseSpeed = 120;
-        float batteryCapacity = 320;
-        float timeToCharge = 0.6;
-        float energyUsage = 1.6;
-        int passengerCount = 4;
-        float faultProb = 0.25;
+        string name;
+        float cruiseSpeed;
+        float batteryCapacity;
+        float timeToCharge;
+        float energyUsage;
+        int passengerCount;
+        float faultProb;
 
         switch(type) {
         case 0:
